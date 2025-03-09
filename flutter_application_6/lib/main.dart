@@ -40,31 +40,52 @@ class TitlePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              "Scavenger Hunt of PFT",
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
+      body: Stack(
+        children: [
+          // Main content
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "Scavenger Hunt of PFT",
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const FirstFloorPage()),
+                    );
+                  },
+                  child: const Text("START", style: TextStyle(fontSize: 18)),
+                ),
+                const SizedBox(height: 20), // Space between button and map
+                Image.asset(
+                  'media/map.png',
+                  width: 500, // Adjust width as needed
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const FirstFloorPage()),
-                );
-              },
-              child: const Text("START", style: TextStyle(fontSize: 18)),
+          ),
+
+          // Girl image positioned at the bottom right
+          Positioned(
+            bottom: 20, // Distance from the bottom
+            left: 100, // Distance from the right
+            child: Image.asset(
+              'media/girl.png',
+              width: 180, // Adjust size as needed
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
+
 
 class FirstFloorPage extends StatefulWidget {
   const FirstFloorPage({super.key});
