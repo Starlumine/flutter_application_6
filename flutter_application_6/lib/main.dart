@@ -24,6 +24,7 @@ class ProgressTracker extends InheritedWidget {
   final int totalQuestions = 11;
   final ValueNotifier<int> scoreNotifier = ValueNotifier<int>(0);
   final List<bool> answeredQuestions = List.generate(11, (_) => false); // List to track all answers
+  final List<bool> incorrectAnswers = List.generate(11, (_) => false); // List to track incorrect answers
 
   ProgressTracker({super.key, required super.child});
 
@@ -45,7 +46,7 @@ class ProgressTracker extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant ProgressTracker oldWidget) {
-    return answeredQuestions != oldWidget.answeredQuestions; // Ensure the UI is updated when the list changes
+    return answeredQuestions != oldWidget.answeredQuestions || incorrectAnswers != oldWidget.incorrectAnswers;
   }
 }
 
@@ -221,16 +222,23 @@ class FirstFloorPageState extends State<FirstFloorPage> {
                     setState(() {
                       progressTracker.answeredQuestions[index] = true; // Mark as answered
                       progressTracker.scoreNotifier.value++; // Increment score if correct
+                      progressTracker.incorrectAnswers[index] = false; // Reset incorrect state if correct
                     });
 
                     // Check if all questions are answered
                     progressTracker.checkForCompletion(context); // Call this after answering
+                  } else if (input.trim().isNotEmpty) {
+                    setState(() {
+                      progressTracker.incorrectAnswers[index] = true; // Mark as incorrect
+                    });
                   }
                 },
               ),
             ),
             if (progressTracker.answeredQuestions[index])
               const Icon(Icons.check_circle, color: Colors.green), // Display checkmark if answered correctly
+            if (progressTracker.incorrectAnswers[index])
+              const Icon(Icons.cancel, color: Colors.red), // Display X if answer is incorrect
           ],
         ),
       ),
@@ -357,6 +365,14 @@ class SecondFloorPageState extends State<SecondFloorPage> {
                     setState(() {
                       progressTracker.answeredQuestions[index] = true; // Mark as answered
                       progressTracker.scoreNotifier.value++; // Increment score if correct
+                      progressTracker.incorrectAnswers[index] = false; // Reset incorrect state if correct
+                    });
+
+                    // Check if all questions are answered
+                    progressTracker.checkForCompletion(context); // Call this after answering
+                  } else if (input.trim().isNotEmpty) {
+                    setState(() {
+                      progressTracker.incorrectAnswers[index] = true; // Mark as incorrect
                     });
                   }
                 },
@@ -364,6 +380,8 @@ class SecondFloorPageState extends State<SecondFloorPage> {
             ),
             if (progressTracker.answeredQuestions[index])
               const Icon(Icons.check_circle, color: Colors.green), // Display checkmark if answered correctly
+            if (progressTracker.incorrectAnswers[index])
+              const Icon(Icons.cancel, color: Colors.red), // Display X if answer is incorrect
           ],
         ),
       ),
@@ -439,6 +457,14 @@ class ThirdFloorPageState extends State<ThirdFloorPage> {
                     setState(() {
                       progressTracker.answeredQuestions[index] = true; // Mark as answered
                       progressTracker.scoreNotifier.value++; // Increment score if correct
+                      progressTracker.incorrectAnswers[index] = false; // Reset incorrect state if correct
+                    });
+
+                    // Check if all questions are answered
+                    progressTracker.checkForCompletion(context); // Call this after answering
+                  } else if (input.trim().isNotEmpty) {
+                    setState(() {
+                      progressTracker.incorrectAnswers[index] = true; // Mark as incorrect
                     });
                   }
                 },
@@ -446,6 +472,8 @@ class ThirdFloorPageState extends State<ThirdFloorPage> {
             ),
             if (progressTracker.answeredQuestions[index])
               const Icon(Icons.check_circle, color: Colors.green), // Display checkmark if answered correctly
+            if (progressTracker.incorrectAnswers[index])
+              const Icon(Icons.cancel, color: Colors.red), // Display X if answer is incorrect
           ],
         ),
       ),
