@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Import to use LogicalKeyboardKey
 
 void main() {
   runApp(const MyApp());
@@ -27,7 +28,7 @@ class ProgressTracker extends InheritedWidget {
   ProgressTracker({super.key, required super.child});
 
   void checkForCompletion(BuildContext context) {
-    if (answeredQuestions.every((answered) => answered)) {
+    if (scoreNotifier.value == totalQuestions) {
       // Ensure the widget rebuilds before navigating
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.pushReplacement(
@@ -117,6 +118,21 @@ class FirstFloorPageState extends State<FirstFloorPage> {
     {"question": "On the purple banners right above the large stairs, what is the word that starts with the letter T on the banner?", "answer": "Teammate", "answered": false},
   ];
 
+  // Add FocusNode to listen for key events
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.requestFocus();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,18 +150,30 @@ class FirstFloorPageState extends State<FirstFloorPage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: _buildFirstFloorQuestionList(context),
-          ),
-          // Searching image at the bottom
-          Image.asset(
-            'media/searching.png',
-            width: 300, // Adjust size as needed
-          ),
-          const SizedBox(height: 10), // Space between image and bottom
-        ],
+      body: RawKeyboardListener(
+        focusNode: _focusNode, // Attach FocusNode here
+        onKey: (RawKeyEvent event) {
+          if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+            // Navigate to the CongratsPage when up arrow is pressed
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const CongratsPage()),
+            );
+          }
+        },
+        child: Column(
+          children: [
+            Expanded(
+              child: _buildFirstFloorQuestionList(context),
+            ),
+            // Searching image at the bottom
+            Image.asset(
+              'media/searching.png',
+              width: 300, // Adjust size as needed
+            ),
+            const SizedBox(height: 10), // Space between image and bottom
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
