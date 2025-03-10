@@ -26,12 +26,26 @@ class ProgressTracker extends InheritedWidget {
 
   ProgressTracker({super.key, required super.child});
 
+  void checkForCompletion(BuildContext context) {
+    if (answeredQuestions.every((answered) => answered)) {
+      // Ensure the widget rebuilds before navigating
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const CongratsPage()),
+        );
+      });
+    }
+  }
+
   static ProgressTracker of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<ProgressTracker>()!;
   }
 
   @override
-  bool updateShouldNotify(covariant ProgressTracker oldWidget) => true;
+  bool updateShouldNotify(covariant ProgressTracker oldWidget) {
+    return answeredQuestions != oldWidget.answeredQuestions; // Ensure the UI is updated when the list changes
+  }
 }
 
 class TitlePage extends StatelessWidget {
@@ -85,7 +99,6 @@ class TitlePage extends StatelessWidget {
     );
   }
 }
-
 
 class FirstFloorPage extends StatefulWidget {
   const FirstFloorPage({super.key});
@@ -181,12 +194,57 @@ class FirstFloorPageState extends State<FirstFloorPage> {
                       progressTracker.answeredQuestions[index] = true; // Mark as answered
                       progressTracker.scoreNotifier.value++; // Increment score if correct
                     });
+
+                    // Check if all questions are answered
+                    progressTracker.checkForCompletion(context); // Call this after answering
                   }
                 },
               ),
             ),
             if (progressTracker.answeredQuestions[index])
               const Icon(Icons.check_circle, color: Colors.green), // Display checkmark if answered correctly
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CongratsPage extends StatelessWidget {
+  const CongratsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              "🎉 Congratulations! 🎉",
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "You've answered all 11 questions correctly!",
+              style: TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            Image.asset('media/trophy.png', width: 200), // Add a trophy image
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Restart the game
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const TitlePage()),
+                  (route) => false,
+                );
+              },
+              child: const Text("Play Again", style: TextStyle(fontSize: 18)),
+            ),
           ],
         ),
       ),
