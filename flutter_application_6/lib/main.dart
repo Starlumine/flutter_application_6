@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Tracks and stores the total score
+// Tracks and stores the total scores
 class ProgressTracker extends InheritedWidget {
   final int totalQuestions = 11;
   final ValueNotifier<int> scoreNotifier = ValueNotifier<int>(0);
