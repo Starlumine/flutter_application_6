@@ -121,7 +121,19 @@ class FirstFloorPageState extends State<FirstFloorPage> {
           ),
         ],
       ),
-      body: _buildFirstFloorQuestionList(context),
+      body: Column(
+        children: [
+          Expanded(
+            child: _buildFirstFloorQuestionList(context),
+          ),
+          // Searching image at the bottom
+          Image.asset(
+            'media/searching.png',
+            width: 300, // Adjust size as needed
+          ),
+          const SizedBox(height: 10), // Space between image and bottom
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
